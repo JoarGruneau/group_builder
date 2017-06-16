@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load sitetree %}
 
 {% block content %}
 <div class="container">
@@ -8,6 +9,8 @@
   <h1>Wellcome</h1>
   <p>Group builder</p>
    <td><form action="/create/group"><input class="btn btn-success btn-sm" type="submit" value="creat new group" /></form></td> 
+   {% sitetree_menu from 'maintree' include 'trunk' %}
+{% sitetree_breadcrumbs from 'kc' %}
 </div>
 </div>
 </div>

@@ -42,6 +42,7 @@ PREREQ_APPS = [
 PROJECT_APPS = [
     'group_builder.apps.accounts',
     'group_builder.apps.groups',
+    'group_builder.apps.sitetree',
 ]
 
 INSTALLED_APPS = PREREQ_APPS + PROJECT_APPS
@@ -125,3 +126,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGIN_REDIRECT_URL = '/'
