@@ -43,6 +43,7 @@ PROJECT_APPS = [
     'group_builder.apps.accounts',
     'group_builder.apps.groups',
     'group_builder.apps.sitetree',
+    'group_builder.apps.mptt',
 ]
 
 INSTALLED_APPS = PREREQ_APPS + PROJECT_APPS
