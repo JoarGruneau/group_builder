@@ -1,14 +1,15 @@
 from django.db import models
 from django.utils import timezone
-class Group(models.Model):
-    author = models.ForeignKey('auth.User')
-    name = models.TextField()
-    published_date = models.DateTimeField(
-            blank=True, null=True)
+from group_builder.apps.mptt.models import MPTTModel, TreeForeignKey
 
-    def publish(self):
-        self.published_date = timezone.now()
-        self.save()
+class Group_Base(MPTTModel):
+    creator = models.ForeignKey('auth.User')
+    name = models.CharField(max_length=50)
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
 
-    def __str__(self):
-        return name
+class Group(MPTTModel):
+    name = models.CharField(max_length=50)
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+
+    class MPTTMeta:
+        order_insertion_by = ['name']

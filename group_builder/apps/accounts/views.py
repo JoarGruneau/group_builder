@@ -3,10 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 import group_builder.apps.accounts.forms as accounts_forms
 
-@login_required(login_url="login/")
-def home(request):
-    return render(request,"home.html")
-
 def register(request):
     if(request.method == 'POST'):
         form = accounts_forms.RegisterForm(request.POST)

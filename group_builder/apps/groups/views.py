@@ -5,13 +5,13 @@ import group_builder.apps.groups.models as group_models
 import group_builder.apps.groups.forms as group_forms
 
 @login_required(login_url="login/")
+def home(request):
+    return render(request,"home.html", {'nodes': group_models.Group.objects.all()})
+
+@login_required(login_url="login/")
 def create_group(request):
     if(request.method == "POST"):
-        group = group_models.Group()
-        group.author = request.user
-        group.name = request.POST.get("name", "")
-        print(group.name)
-        group.publish()
+        group_models.Group.objects.create(name = request.POST.get('name', ''))
         return redirect('home')
 
     elif(request.method == "GET"):

@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load sitetree %}
 
 {% block content %}
 <div class="container">
@@ -9,7 +8,19 @@
   <h1>Wellcome</h1>
   <p>Group builder</p>
    <td><form action="/create/group"><input class="btn btn-success btn-sm" type="submit" value="creat new group" /></form></td> 
-   {% sitetree_menu from 'kc' include 'trunk' %}
+   {% load mptt_tags %}
+    <ul>
+        {% recursetree nodes %}
+            <li>
+                <p>{{ node.name }}</p>
+                {% if not node.is_leaf_node %}
+                    <ul class="children">
+                        {{ children }}
+                    </ul>
+                {% endif %}
+            </li>
+    {% endrecursetree %}
+    </ul>
 </div>
 </div>
 </div>
