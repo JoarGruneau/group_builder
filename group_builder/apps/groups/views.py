@@ -33,3 +33,12 @@ def create_group(request):
     elif(request.method == "GET"):
         form = group_forms.CreateGroupForm()
         return render(request,"create_group.html", {'form': form})
+
+@login_required(login_url="login/")
+def group(request):
+    if(request.method == "GET"):
+        id = request.GET.get("id", "")
+        group = group_models.Group.objects.get(id = id)
+        if(group.has_permission(request.user, group_models.Permission.READ)):
+            groups = group.get_descendants(include_self=True)
+            return render(request,"group.html", {'nodes': groups, 'parent': group})

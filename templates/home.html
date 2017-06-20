@@ -12,15 +12,16 @@
         <ul>
             {% recursetree nodes %}
                 <li>
-                    <p>{{ node.name }}</p>
-                    <form method="post" action="">
-                        {% csrf_token %}
-                            <table>
-                                <tr>
-                                    <input type='hidden' name='parent' value="{{ node.id }}" />
-                                    <td><input type="text" name="name" value=""></td>
-                                    <td><input class="btn btn-success btn-sm" type="submit" value="create child" /></td></form>  
-                                </tr> 
+                    <table>
+                        <tr>
+                            <td><a href="/group?id={{ node.id }}"> {{ node.name }}</a>
+                            <form method="post" action="" type = 'hidden'>
+                                {% csrf_token %}
+                                <input type='hidden' name='parent' value="{{ node.id }}" />
+                                <td><input type="text" name="name" value=""></td>
+                                <td><input class="btn btn-success btn-sm" type="submit" value="create child" /></td>
+                            </form>  
+                        </tr> 
                             </table>
                     </form>
                     {% if not node.is_leaf_node %}

@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from group_builder.apps.mptt.models import MPTTModel, TreeForeignKey
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 
 class Group(MPTTModel):
     name = models.CharField(max_length=50)
@@ -11,12 +12,18 @@ class Group(MPTTModel):
         order_insertion_by = ['name']
     
     def has_permission(self, user, permission_type):
-        for perm in list(Permission.objects.filter(user = user, group__tree_id__contains=self.tree_id)):
-            print(permission_type)
-            print(perm.permission)
-            if(self.lft >= perm.group.lft and self.rght <= perm.group.rght and permission_type <= perm.permission):
-                return True
-        return False
+        if(Permission.objects.filter(user = user, group__tree_id=self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).exists()):
+            return True
+        else:
+            return False
+
+    def field_url(self):
+        return "?id="+str(self.id)
+
+    def get_members(self):
+        perm = Permission.objects.filter(
+            group__tree_id = self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).order_by("-permission").distinct('user')
+
 
 
 class Permission(models.Model):
@@ -28,3 +35,10 @@ class Permission(models.Model):
     SUPER_USER = 3
     permission_choice = ((READ, "read"), (UPLOAD, "upload"), (SUPER_USER, "super_user"))
     permission = models.PositiveIntegerField(choices = permission_choice, default = READ)
+
+
+class Invitations(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    invited_by = models.ForeignKey(User, on_delete = models.CASCADE, related_name='invited_by')
+    permission = models.PositiveIntegerField(choices = Permission.permission_choice, default = Permission.READ)
