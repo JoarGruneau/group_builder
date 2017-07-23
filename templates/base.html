@@ -33,7 +33,8 @@
 	      <li class="active"><a href="/my_groups">My groups</a></li>
 	      <li><a href="/participating_groups">Participating groups</a></li>
 	      <li><a href="/invitations">Invitations</a></li>
-	      <li><a href="/settings">Settings</a></li>
+	      <li><a href="/settings">Notifications</a></li>
+	      <li><a href="/create/group">Create new group</a></li>
 	    </ul>
 
 	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -46,7 +47,7 @@
 	            <li><a href="#">Another action</a></li>
 	            <li><a href="#">Something else here</a></li>
 	            <li class="divider"></li>
-	            <li><a href="#">Separated link</a></li>
+	            <li><a href="#">Settings</a></li>
 	            <li class="divider"></li>
 	            <li><a href="/logout">Logout</a></li>
 	          </ul>
@@ -58,7 +59,8 @@
 
 	</nav>
 	
-
+ 				{% block groups %}
+ 				{% endblock %}
 	            {% block content %}
 	            {% endblock %}
 

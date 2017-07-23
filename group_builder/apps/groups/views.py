@@ -37,8 +37,34 @@ def create_group(request):
 @login_required(login_url="login/")
 def group(request):
     if(request.method == "GET"):
+        try:
+            id = request.GET.get("id", "")
+            parent = group_models.Group.objects.get(id = id)
+            if(parent.has_permission(request.user, group_models.Permission.READ)):
+                groups = parent.get_descendants(include_self=True)
+                breadcrums = []
+                return render(request,"group.html", {'nodes': groups, 'parent': parent, 'breadcrums': breadcrums})
+        except Exception:
+            return redirect('home')
+
+@login_required(login_url="login/")
+def members(request):
+    if(request.method == "GET"):
         id = request.GET.get("id", "")
-        group = group_models.Group.objects.get(id = id)
-        if(group.has_permission(request.user, group_models.Permission.READ)):
-            groups = group.get_descendants(include_self=True)
-            return render(request,"group.html", {'nodes': groups, 'parent': group})
+        parent = group_models.Group.objects.get(id = id)
+        if(parent.has_permission(request.user, group_models.Permission.READ)):
+            groups = parent.get_descendants(include_self=True)
+            members = parent.get_members()
+            print("this is the members")
+            print(members)
+            return render(request,"members.html", {'nodes': groups, 'parent': parent, 'members': members})
+        # except Exception:
+        #     return redirect('home')
+
+@login_required(login_url="login/")
+def documents(request):
+    return render(request,"documents.html")
+
+@login_required(login_url="login/")
+def conversations(request):
+    return render(request,"conversations.html")

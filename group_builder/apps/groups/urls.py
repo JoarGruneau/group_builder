@@ -5,5 +5,8 @@ import group_builder.apps.groups.views as group_views
 urlpatterns = [
     url(r'^$', group_views.home, name='home'),
     url(r'^group$', group_views.group, name='group'),
+    url(r'^conversations$', group_views.conversations, name='conversations'),
+    url(r'^members$', group_views.members, name='members'),
+    url(r'^documents$', group_views.documents, name='documents'),
 	url(r'^create/group$', group_views.create_group, name='create_group'),
 ]

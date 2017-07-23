@@ -12,7 +12,8 @@ class Group(MPTTModel):
         order_insertion_by = ['name']
     
     def has_permission(self, user, permission_type):
-        if(Permission.objects.filter(user = user, group__tree_id=self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).exists()):
+        if(Permission.objects.filter(
+            user = user, group__tree_id=self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).exists()):
             return True
         else:
             return False
@@ -21,14 +22,17 @@ class Group(MPTTModel):
         return "?id="+str(self.id)
 
     def get_members(self):
-        perm = Permission.objects.filter(
-            group__tree_id = self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).order_by("-permission").distinct('user')
+        members = Permission.objects.filter(
+            group__tree_id = self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).values(
+            'user__first_name', 'user__last_name', 'user__email', 'permission')
+        #members = User.objects.filter(id=perm.values('user__id'))
+        return list(members)
 
 
 
 class Permission(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE,)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,)
+    group = models.OneToOneField(Group, on_delete=models.CASCADE,)
 
     READ = 1
     UPLOAD = 2

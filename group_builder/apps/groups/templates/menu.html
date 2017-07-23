@@ -1,0 +1,23 @@
+{% load mptt_tags %}
+    <ul>
+        {% recursetree nodes %}
+            <li>
+                <p>{{ node.name }}</p>
+                <form method="post" action="">
+                    {% csrf_token %}
+                        <table>
+                            <tr>
+                                <input type='hidden' name='group' value="{{ node.tree_id }}" />
+                                <input type='hidden' name='parent' value="{{ node.parent.tree_id }}" />
+                                <td><input type="text" name="name" value=""></td>
+                                <td><input class="btn btn-success btn-sm" type="submit" value="create child" /></td></form>  
+                            </tr> 
+                        </table>
+                </form>
+                {% if not node.is_leaf_node %}
+                    <ul class="children">
+                        {{ children }}
+                    </ul>
+                {% endif %}
+            </li>
+    {% endrecursetree %}

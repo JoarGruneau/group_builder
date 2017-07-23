@@ -5,33 +5,29 @@
 <div class="row">
 
 <div class="home">
-  <h1>Wellcome</h1>
-  <p>Group builder</p>
-   <td><form action="/create/group"><input class="btn btn-success btn-sm" type="submit" value="creat new group" /></form></td> 
     {% load mptt_tags %}
-        <ul>
-            {% recursetree nodes %}
-                <li>
-                    <table>
-                        <tr>
-                            <td><a href="/group?id={{ node.id }}"> {{ node.name }}</a>
-                            <form method="post" action="" type = 'hidden'>
-                                {% csrf_token %}
-                                <input type='hidden' name='parent' value="{{ node.id }}" />
-                                <td><input type="text" name="name" value=""></td>
-                                <td><input class="btn btn-success btn-sm" type="submit" value="create child" /></td>
-                            </form>  
-                        </tr> 
-                            </table>
-                    </form>
-                    {% if not node.is_leaf_node %}
-                        <ul class="children">
-                            {{ children }}
-                        </ul>
-                    {% endif %}
-                </li>
+        {% recursetree nodes %}
+        <li>
+            <table>
+                <tr>
+                   <form> <td><a href="/group{{ node.field_url }}"> {{ node.name }}</a></td></from>
+                </tr> 
+                    </table>
+            {% if not node.is_leaf_node %}
+                <ul class="children">
+                    {{ children }}
+                </ul>
+            {% endif %}
+            </li>
         {% endrecursetree %}
 </div>
 </div>
 </div>
 {% endblock %}
+<!-- 
+                    <form method="post" action="" type = 'hidden'>
+                        {% csrf_token %}
+                        <input type='hidden' name='parent' value="{{ node.id }}" />
+                        <td><input type="text" name="name" value=""></td>
+                        <td><input class="btn btn-success btn-sm" type="submit" value="create child" /></td>
+                    </form>   -->
