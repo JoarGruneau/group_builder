@@ -1,14 +1,11 @@
-{% extends 'base.html' %}
+{% extends 'base_tree_view.html' %}
 
-{% block groups %}
-<!-- <link href="{% static 'css/divtree.css' %}" rel="stylesheet"> -->
+{% block content %}
 {% load mptt_tags %}
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <div class="navbar-header">
-<!-- <nav class="navbar navbar-default navbar-lower" role="navigation">
-  <div class="container">
-    <div class="collapse navbar-collapse collapse-buttons"> -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+
         <ul class="nav navbar-nav">
           <li class="active"><a href="/groups{{parent.field_url}}">Overview</a></li>
           <li><a href="/members{{parent.field_url}}">Members</a></li>
@@ -24,7 +21,7 @@
 
 <div class="container">
     <div class="row">
-<div id="left" class="span3">
+<!-- <div id="left" class="span3">
   <p>Group builder</p>
         <ul>
             {% recursetree nodes %}
@@ -32,12 +29,12 @@
                     <table>
                         <tr>
                             <td><a href="/group{{ node.field_url }}"> {{ node.name }}</a>
-<!--                             <form method="post" action="" type = 'hidden'>
+                            <form method="post" action="" type = 'hidden'>
                                 {% csrf_token %}
                                 <input type='hidden' name='parent' value="{{ node.id }}" />
                                 <td><input type="text" name="name" value=""></td>
                                 <td><input class="btn btn-success btn-sm" type="submit" value="create child" /></td>
-                            </form>   -->
+                            </form>  
                         </tr> 
                             </table>
                     {% if not node.is_leaf_node %}
@@ -47,12 +44,9 @@
                     {% endif %}
                 </li>
         {% endrecursetree %}
+</div> -->
 </div>
 </div>
 </div>
 </div>
-</div>
-<!--       <script src = "{% static 'js/divtree.js' %}"></script> --> -->
 {% endblock %}
-
-

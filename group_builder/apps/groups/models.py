@@ -31,7 +31,7 @@ class Group(MPTTModel):
 
 
 class Permission(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,)
     group = models.OneToOneField(Group, on_delete=models.CASCADE,)
 
     READ = 1
