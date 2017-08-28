@@ -1,33 +1,64 @@
 {% extends 'base.html' %}
 
 {% block tree_view %}
-<div class="container">
-<div class="row">
 
-<div class="home">
-    {% load mptt_tags %}
-        {% recursetree nodes %}
-        <li>
-            <table>
-                <tr>
-                   <form> <td><a href="/group{{ node.field_url }}"> {{ node.name }}</a></td></from>
-                </tr> 
-                    </table>
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/divtree.css' %}">
+<link rel="js" href="{% static 'js/divtree.js' %}">
+
+<div class="container">
+    <div class="panel panel-default">
+        <ul class="treeview">
+            {% load mptt_tags %}
+            {% recursetree nodes %}
+            <li><a href="/group{{ node.field_url }}">{{ node.name }}</a>
             {% if not node.is_leaf_node %}
                 <ul class="children">
                     {{ children }}
                 </ul>
             {% endif %}
             </li>
-        {% endrecursetree %}
+            {% endrecursetree %}
+<!--             <li><a href="#">Brandach</a></li>
+
+                <ul>
+                    <li><a href="#">Branch</a></li>
+                    <li><a href="#">Branch</a>
+                        <ul>
+                            <li><a href="#">Stick</a></li>
+                            <li><a href="#">Stick</a></li>
+                            <li><a href="#">Stick</a>
+                                <ul>
+                                    <li><a href="#">Twig</a></li>
+                                    <li><a href="#">Twig</a></li>
+                                    <li><a href="#">Twig</a></li>
+                                    <li><a href="#">Twig</a>
+                                        <ul>
+                                            <li><a href="#">Leaf</a></li>
+                                            <li><a href="#">Leaf</a></li>
+                                            <li><a href="#">Leaf</a></li>
+                                            <li><a href="#">Leaf</a></li>
+                                            <li><a href="#">Leaf</a></li>
+                                            <li><a href="#">Leaf</a></li>
+                                            <li><a href="#">Leaf</a></li>
+                                            <li><a href="#">Leaf</a></li>
+                                            <li><a href="#">Leaf</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#">Twig</a></li>
+                                    <li><a href="#">Twig</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Stick</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">Branch</a></li>
+                    <li><a href="#">Branch</a></li>
+                </ul>
+            </li> -->
+        </ul>
+    </div>
 </div>
-</div>
-</div>
+
 {% endblock %}
-<!-- 
-                    <form method="post" action="" type = 'hidden'>
-                        {% csrf_token %}
-                        <input type='hidden' name='parent' value="{{ node.id }}" />
-                        <td><input type="text" name="name" value=""></td>
-                        <td><input class="btn btn-success btn-sm" type="submit" value="create child" /></td>
-                    </form>   -->

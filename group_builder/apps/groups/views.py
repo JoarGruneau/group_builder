@@ -35,26 +35,36 @@ def create_group(request):
         form = group_forms.CreateGroupForm()
         return render(request,"create_group.html", {'form': form})
 
+@login_required(login_url = "login/")
+def create_child(request):
+    if(request.method == "POST"):
+        parent = group_models.Group.objects.get(id = request.POST.get("parent", ""))
+
+        if(parent.has_permission(request.user, group_models.Permission.SUPER_USER)):
+            name = request.POST.get("name", "")
+            group_models.Group.objects.create(name = name, parent = parent)
+        return redirect('home')
+    elif(request.method == "GET"):
+        form = group_forms.CreateChildForm(id = request.GET.get("id", ""))
+        return render(request,"create_group.html", {'form': form})
+
+
+
 @login_required(login_url="login/")
 def group(request):
     if(request.method == "GET"):
-        print("aeaa")
         try:
             id = request.GET.get("id", "")
-            print("aesdsssaa")
             parent = group_models.Group.objects.get(id = id)
             if(parent.has_permission(request.user, group_models.Permission.READ)):
 
                 groups = parent.get_descendants(include_self=True)
-                print(groups)
-                print(parent)
                 breadcrums = []
-                print("aesdsssaammmm")
                 return render(request,"group_base.html", {'nodes': groups, 'parent': parent})
         except Exception:
-            print ("Exception in user code:")
-            traceback.print_exc(file=sys.stdout)
-            print("weere")
+            # print ("Exception in user code:")
+            # traceback.print_exc(file=sys.stdout)
+            # print("weere")
             return redirect('home')
 
 @login_required(login_url="login/")

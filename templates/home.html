@@ -1,7 +1,7 @@
-{% extends 'base.html' %}
+{% extends 'base_tree_view.html' %}
 
-{% block tree_view %}
-<div class="container">
+{% block content %}
+<!-- <div class="container">
 <div class="row">
 
 <div class="home">
@@ -22,12 +22,5 @@
         {% endrecursetree %}
 </div>
 </div>
-</div>
+</div> -->
 {% endblock %}
-<!-- 
-                    <form method="post" action="" type = 'hidden'>
-                        {% csrf_token %}
-                        <input type='hidden' name='parent' value="{{ node.id }}" />
-                        <td><input type="text" name="name" value=""></td>
-                        <td><input class="btn btn-success btn-sm" type="submit" value="create child" /></td>
-                    </form>   -->
