@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/divtree.css' %}">
 <link rel="js" href="{% static 'js/divtree.js' %}">
 
-<div class="container">
+<nav class="sidebar">
     <div class="panel panel-default">
         <ul class="treeview">
             {% load mptt_tags %}
@@ -20,45 +20,8 @@
             {% endif %}
             </li>
             {% endrecursetree %}
-<!--             <li><a href="#">Brandach</a></li>
-
-                <ul>
-                    <li><a href="#">Branch</a></li>
-                    <li><a href="#">Branch</a>
-                        <ul>
-                            <li><a href="#">Stick</a></li>
-                            <li><a href="#">Stick</a></li>
-                            <li><a href="#">Stick</a>
-                                <ul>
-                                    <li><a href="#">Twig</a></li>
-                                    <li><a href="#">Twig</a></li>
-                                    <li><a href="#">Twig</a></li>
-                                    <li><a href="#">Twig</a>
-                                        <ul>
-                                            <li><a href="#">Leaf</a></li>
-                                            <li><a href="#">Leaf</a></li>
-                                            <li><a href="#">Leaf</a></li>
-                                            <li><a href="#">Leaf</a></li>
-                                            <li><a href="#">Leaf</a></li>
-                                            <li><a href="#">Leaf</a></li>
-                                            <li><a href="#">Leaf</a></li>
-                                            <li><a href="#">Leaf</a></li>
-                                            <li><a href="#">Leaf</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#">Twig</a></li>
-                                    <li><a href="#">Twig</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#">Stick</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="#">Branch</a></li>
-                    <li><a href="#">Branch</a></li>
-                </ul>
-            </li> -->
         </ul>
     </div>
-</div>
+</nav>
 
 {% endblock %}

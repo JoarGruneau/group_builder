@@ -1,17 +1,22 @@
+nav.sidebar {
+	margin-left: 0px;
+	max-width: 200px;
+	float: top;
+}
+
 div.panel:first-child {
     margin-top:20px;
 }
 
-div.treeview {
+nav.treeview {
     min-width: 100px;
     min-height: 100px;
     
     max-height: 256px;
     overflow:auto;
+	float: top;
 	
 	padding: 4px;
-	
-	margin-bottom: 20px;
 	
 	color: #369;
 	

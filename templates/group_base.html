@@ -1,52 +1,27 @@
 {% extends 'base_tree_view.html' %}
 
 {% block content %}
-{% load mptt_tags %}
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
 
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="/groups{{parent.field_url}}">Overview</a></li>
-          <li><a href="/members{{parent.field_url}}">Members</a></li>
-          <li><a href="/documents{{parent.field_url}}">Documents</a></li>
-          <li><a href="/timetables{{parent.field_url}}">Timetables</a></li>
-          <li><a href="/create/child{{parent.field_url}}">Create child</a></li>
-        </ul>
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/group_base.css' %}">
+
+{% load mptt_tags %}
+<nav class =group_bar>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="/groups{{parent.field_url}}">Overview</a></li>
+            <li><a href="/members{{parent.field_url}}">Members</a></li>
+            <li><a href="/documents{{parent.field_url}}">Documents</a></li>
+            <li><a href="/timetables{{parent.field_url}}">Timetables</a></li>
+            <li><a href="/create/child{{parent.field_url}}">Create child</a></li>
+          </ul>
+      </div>
     </div>
+  </nav>
+  <div class = "container">
   </div>
 </nav>
-<div class="container">
-<div class="row">
-
-<div class="container">
-    <div class="row">
-<!-- <div id="left" class="span3">
-  <p>Group builder</p>
-        <ul>
-            {% recursetree nodes %}
-                <li>
-                    <table>
-                        <tr>
-                            <td><a href="/group{{ node.field_url }}"> {{ node.name }}</a>
-                            <form method="post" action="" type = 'hidden'>
-                                {% csrf_token %}
-                                <input type='hidden' name='parent' value="{{ node.id }}" />
-                                <td><input type="text" name="name" value=""></td>
-                                <td><input class="btn btn-success btn-sm" type="submit" value="create child" /></td>
-                            </form>  
-                        </tr> 
-                            </table>
-                    {% if not node.is_leaf_node %}
-                        <ul class="children">
-                            {{ children }}
-                        </ul>
-                    {% endif %}
-                </li>
-        {% endrecursetree %}
-</div> -->
-</div>
-</div>
-</div>
-</div>
 {% endblock %}

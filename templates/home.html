@@ -1,26 +1,5 @@
 {% extends 'base_tree_view.html' %}
 
 {% block content %}
-<!-- <div class="container">
-<div class="row">
 
-<div class="home">
-    {% load mptt_tags %}
-        {% recursetree nodes %}
-        <li>
-            <table>
-                <tr>
-                   <form> <td><a href="/group{{ node.field_url }}"> {{ node.name }}</a></td></from>
-                </tr> 
-                    </table>
-            {% if not node.is_leaf_node %}
-                <ul class="children">
-                    {{ children }}
-                </ul>
-            {% endif %}
-            </li>
-        {% endrecursetree %}
-</div>
-</div>
-</div> -->
 {% endblock %}
