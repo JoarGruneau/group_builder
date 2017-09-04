@@ -58,12 +58,12 @@ def members(request):
     if(request.method == "GET"):
         parent, group_tree = lib_views.get_tree_info(request)
         members, invites = parent.get_members()
-        form = group_forms.MemberInvitationForm(id = parent.id)
+        form = group_forms.MemberInvitationForm()
         return render(request,"members.html", {'nodes': group_tree, 'parent': parent, 'members': members, 'invites': invites, 'form': form})
 
     elif(request.method == "POST"):
         email = request.POST.get("email", "")
-        parent = group_models.Group.objects.get(id = request.POST.get("parent", ""))
+        parent = group_models.Group.objects.get(id = request.GET.get("id", ""))
 
         if parent.has_permission(request.user, group_models.Permission.SUPER_USER):
             if(parent.member_exsist(email)):
@@ -78,8 +78,20 @@ def members(request):
 @login_required(login_url="login/")
 def documents(request):
     parent, group_tree = lib_views.get_tree_info(request)
-    documents =[]
-    return render(request,"documents.html", {'parent': parent, 'nodes': group_tree, 'documents': documents})
+    if request.method == 'POST':
+        form = group_forms.DocumentForm(request.POST, request.FILES)
+        if True:
+            print("dsdw")
+            newdoc = group_models.Document(docfile = request.FILES['docfile'])
+            newdoc.save()
+            return redirect('/documents' + parent.field_url())
+        else:
+            print("form not bvalis")
+    else:
+        form = group_forms.DocumentForm()
+
+    documents = group_models.Document.objects.all()
+    return render(request,"documents.html", {'parent': parent, 'nodes': group_tree, 'documents': documents, 'form': form})
 
 @login_required(login_url="login/")
 def conversations(request):

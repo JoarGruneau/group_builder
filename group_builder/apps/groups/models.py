@@ -21,6 +21,7 @@ class Group(MPTTModel):
     def has_invitation(self, email, permission_type):
         return Invitations.objects.filter(email = email, permission = permission_type).exists()
 
+    #This function needs work since it can return the same member with number of times with different permissions
     def get_members(self):
         members = Permission.objects.filter(
             group__tree_id = self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).values(
@@ -41,8 +42,6 @@ class Group(MPTTModel):
         return Permission.objects.filter(user__email = email, group__tree_id=self.tree_id).exists()
 
 
-
-
 class Permission(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,)
     group = models.OneToOneField(Group, on_delete=models.CASCADE,)
@@ -58,3 +57,7 @@ class Invitations(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     invited_by = models.ForeignKey(User, on_delete = models.CASCADE, related_name='invited_by')
     permission = models.PositiveIntegerField(choices = Permission.permission_choice, default = Permission.READ)
+
+class Document(models.Model):
+    docfile = models.FileField(upload_to='documents/%Y/%m/%d')
+    
