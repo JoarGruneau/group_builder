@@ -1,9 +1,18 @@
 {% extends 'group_base.html' %}
 {% block page %}
 <div class="home">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input class="btn btn-success btn-sm" type="submit" value="Add member" />
+    </form>
     <div class="list-group">
         {% for member in members %}
              <a href="#" class="list-group-item">{{member.user__first_name}} {{member.user__last_name}}     email: {{member.user__email}} permission: {{member.permission}}</a>
+        {% endfor %}
+        <p><b>invited members</b></p>
+        {% for invite in invites %}
+            <a href="#" class="list-group-item">{{invite.email}} permission: {{invite.permission}}</a>
         {% endfor %}
     </div>
 </div>

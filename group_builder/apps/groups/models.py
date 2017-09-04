@@ -10,23 +10,36 @@ class Group(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ['name']
-    
-    def has_permission(self, user, permission_type):
-        if(Permission.objects.filter(
-            user = user, group__tree_id=self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).exists()):
-            return True
-        else:
-            return False
 
     def field_url(self):
         return "?id="+str(self.id)
+    
+    def has_permission(self, user, permission_type):
+        return Permission.objects.filter(user = user, permission__gte = permission_type,
+            group__tree_id=self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).exists()
+
+    def has_invitation(self, email, permission_type):
+        return Invitations.objects.filter(email = email, permission = permission_type).exists()
 
     def get_members(self):
         members = Permission.objects.filter(
             group__tree_id = self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).values(
-            'user__first_name', 'user__last_name', 'user__email', 'permission')
+              'user__first_name', 'user__last_name', 'user__email', 'permission')
+        innvited = Invitations.objects.filter(
+            group__tree_id = self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).values(
+              'email', 'permission')
         #members = User.objects.filter(id=perm.values('user__id'))
-        return list(members)
+        return members, innvited
+
+    def get_all_members(self):
+        members = Permission.objects.filter(
+            group__tree_id = self.tree_id).values(
+            'user__first_name', 'user__last_name', 'user__email').distinct()
+        return members
+
+    def member_exsist(self, email):
+        return Permission.objects.filter(user__email = email, group__tree_id=self.tree_id).exists()
+
 
 
 
@@ -40,9 +53,8 @@ class Permission(models.Model):
     permission_choice = ((READ, "read"), (UPLOAD, "upload"), (SUPER_USER, "super_user"))
     permission = models.PositiveIntegerField(choices = permission_choice, default = READ)
 
-
 class Invitations(models.Model):
-    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    email = models.EmailField(max_length=254, null=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     invited_by = models.ForeignKey(User, on_delete = models.CASCADE, related_name='invited_by')
     permission = models.PositiveIntegerField(choices = Permission.permission_choice, default = Permission.READ)

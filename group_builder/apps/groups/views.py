@@ -7,16 +7,6 @@ import group_builder.apps.groups.forms as group_forms
 
 @login_required(login_url="login/")
 def home(request):
-
-    # if(request.method == "POST"):
-    #     parent = group_models.Group.objects.get(id = request.POST.get("parent", ""))
-
-    #     if(parent.has_permission(request.user, group_models.Permission.SUPER_USER)):
-    #         name = request.POST.get("name", "")
-    #         group_models.Group.objects.create(name = name, parent = parent)
-    #     return redirect('home')
-
-    # elif(request.method == "GET"):
     permissions = group_models.Permission.objects.filter(user = request.user)
     groups = []
     for permission in permissions:
@@ -59,7 +49,6 @@ def group(request):
             if(parent.has_permission(request.user, group_models.Permission.READ)):
 
                 groups = parent.get_descendants(include_self=True)
-                breadcrums = []
                 return render(request,"group_base.html", {'nodes': groups, 'parent': parent})
         except Exception:
             # print ("Exception in user code:")
@@ -70,16 +59,25 @@ def group(request):
 @login_required(login_url="login/")
 def members(request):
     if(request.method == "GET"):
-        id = request.GET.get("id", "")
-        parent = group_models.Group.objects.get(id = id)
-        if(parent.has_permission(request.user, group_models.Permission.READ)):
-            groups = parent.get_descendants(include_self=True)
-            members = parent.get_members()
-            print("this is the members")
-            print(members)
-            return render(request,"members.html", {'nodes': groups, 'parent': parent, 'members': members})
-        # except Exception:
-        #     return redirect('home')
+        parent = group_models.Group.objects.get(id = request.GET.get("id", ""))
+        groups = parent.get_descendants(include_self=True)
+        members, invites = parent.get_members()
+        form = group_forms.MemberInvitationForm(id = parent.id)
+        return render(request,"members.html", {'nodes': groups, 'parent': parent, 'members': members, 'invites': invites, 'form': form})
+
+    elif(request.method == "POST"):
+        email = request.POST.get("email", "")
+        parent = group_models.Group.objects.get(id = request.POST.get("parent", ""))
+
+        if parent.has_permission(request.user, group_models.Permission.SUPER_USER):
+            if(parent.member_exsist(email)):
+                group_models.Permission.objects.create(user = request.user, group = parent, permission = group_models.Permission.SUPER_USER)
+            else:
+                if not parent.has_invitation(email = email, permission_type = group_models.Permission.SUPER_USER):
+                    group_models.Invitations.objects.create(email = email, group =parent, 
+                        invited_by = request.user, permission = group_models.Permission.SUPER_USER)
+        return redirect('/members' + parent.field_url())
+
 
 @login_required(login_url="login/")
 def documents(request):
