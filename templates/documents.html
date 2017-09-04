@@ -1,0 +1,15 @@
+{% extends 'group_base.html' %}
+{% block page %}
+<div class="home">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input class="btn btn-success btn-sm" type="submit" value="Submit file" />
+    </form>
+    <div class="list-group">
+        {% for document in documents %}
+             <a href="#" class="list-group-item">{{document.name}}</a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

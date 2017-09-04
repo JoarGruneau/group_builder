@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 import group_builder.apps.groups.models as group_models
 import group_builder.apps.groups.forms as group_forms
+import group_builder.apps.groups.lib_views as lib_views
 
 @login_required(login_url="login/")
 def home(request):
@@ -44,26 +45,21 @@ def create_child(request):
 def group(request):
     if(request.method == "GET"):
         try:
-            id = request.GET.get("id", "")
-            parent = group_models.Group.objects.get(id = id)
-            if(parent.has_permission(request.user, group_models.Permission.READ)):
-
-                groups = parent.get_descendants(include_self=True)
-                return render(request,"group_base.html", {'nodes': groups, 'parent': parent})
+            parent, group_tree = lib_views.get_tree_info(request)
+            return render(request,"group_base.html", {'nodes': group_tree, 'parent': parent})
         except Exception:
-            # print ("Exception in user code:")
-            # traceback.print_exc(file=sys.stdout)
-            # print("weere")
+            print ("Exception in user code:")
+            traceback.print_exc(file=sys.stdout)
+            print("weere")
             return redirect('home')
 
 @login_required(login_url="login/")
 def members(request):
     if(request.method == "GET"):
-        parent = group_models.Group.objects.get(id = request.GET.get("id", ""))
-        groups = parent.get_descendants(include_self=True)
+        parent, group_tree = lib_views.get_tree_info(request)
         members, invites = parent.get_members()
         form = group_forms.MemberInvitationForm(id = parent.id)
-        return render(request,"members.html", {'nodes': groups, 'parent': parent, 'members': members, 'invites': invites, 'form': form})
+        return render(request,"members.html", {'nodes': group_tree, 'parent': parent, 'members': members, 'invites': invites, 'form': form})
 
     elif(request.method == "POST"):
         email = request.POST.get("email", "")
@@ -81,7 +77,9 @@ def members(request):
 
 @login_required(login_url="login/")
 def documents(request):
-    return render(request,"documents.html")
+    parent, group_tree = lib_views.get_tree_info(request)
+    documents =[]
+    return render(request,"documents.html", {'parent': parent, 'nodes': group_tree, 'documents': documents})
 
 @login_required(login_url="login/")
 def conversations(request):
