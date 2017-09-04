@@ -1,12 +1,12 @@
 {% extends 'base_tree_view.html' %}
 
-{% block content %}
+{% block group_view %}
 
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/group_base.css' %}">
 
 {% load mptt_tags %}
-<nav class =group_bar>
+<div class ="group_page">
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -21,7 +21,8 @@
       </div>
     </div>
   </nav>
-  <div class = "container">
-  </div>
 </nav>
+{% block page %}
+{% endblock %}
+</div>
 {% endblock %}
