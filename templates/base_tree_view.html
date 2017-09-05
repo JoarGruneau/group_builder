@@ -1,11 +1,22 @@
 {% extends 'base.html' %}
 
-{% block tree_view %}
-
 {% load static %}
 
+{% block css %}
+
 <link rel="stylesheet" href="{% static 'css/divtree.css' %}">
+{% block pagecss %}
+{% endblock %}
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'js/moment.min.js' %}"></script>
 <script src="{% static 'js/divtree.js' %}"></script>
+{% block pagejavascript %}
+{% endblock %}
+{% endblock %}
+
+{% block tree_view %}
 
 <nav class="sidebar">
     <div class="panel panel-default">
