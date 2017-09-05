@@ -91,6 +91,11 @@ def documents(request):
     print(documents)
     return render(request,"documents.html", {'parent': parent, 'nodes': group_tree, 'documents': documents, 'form': form})
 
+@login_required(login_url = "login/")
+def timetables(request):
+    parent, group_tree = lib_views.get_tree_info(request)
+    return render(request,"timetables.html", {'parent': parent, 'nodes': group_tree})
+
 @login_required(login_url="login/")
 def conversations(request):
     return render(request,"conversations.html")

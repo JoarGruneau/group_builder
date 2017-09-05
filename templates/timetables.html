@@ -1,0 +1,23 @@
+{% extends 'group_base.html' %}
+{% block page %}
+{% load static %}
+<link rel='stylesheet' href="{% static 'css/fullcalendar.min.css' %}"/>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/moment.min.js' %}"></script>
+<script src="{% static 'js/fullcalendar.min.js' %}"></script>
+<div id='calendar'>
+</div>
+{% endblock %}
+{% block javascript %}
+<script>
+    $(document).ready(function() {
+
+    // page is now ready, initialize the calendar...
+
+    $('#calendar').fullCalendar({
+        // put your options and callbacks here
+    })
+
+});</script>
+{% endblock %}
+

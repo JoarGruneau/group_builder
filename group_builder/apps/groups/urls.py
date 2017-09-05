@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^conversations$', group_views.conversations, name='conversations'),
     url(r'^members$', group_views.members, name='members'),
     url(r'^documents$', group_views.documents, name='documents'),
+    url(r'^timetables$', group_views.timetables, name='timetables'),
 	url(r'^create/group$', group_views.create_group, name='create_group'),
     url(r'^create/child$', group_views.create_child, name='create_child'),
 ]
