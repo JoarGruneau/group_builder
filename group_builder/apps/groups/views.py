@@ -70,7 +70,7 @@ def members(request):
                 group_models.Permission.objects.create(user = request.user, group = parent, permission = group_models.Permission.SUPER_USER)
             else:
                 if not parent.has_invitation(email = email, permission_type = group_models.Permission.SUPER_USER):
-                    group_models.Invitations.objects.create(email = email, group =parent, 
+                    group_models.Invitation.objects.create(email = email, group =parent, 
                         invited_by = request.user, permission = group_models.Permission.SUPER_USER)
         return redirect('/members' + parent.field_url())
 
@@ -80,17 +80,15 @@ def documents(request):
     parent, group_tree = lib_views.get_tree_info(request)
     if request.method == 'POST':
         form = group_forms.DocumentForm(request.POST, request.FILES)
-        if True:
-            print("dsdw")
-            newdoc = group_models.Document(docfile = request.FILES['docfile'])
+        if form.is_valid():
+            newdoc = group_models.Document(docfile = request.FILES['docfile'], group = parent)
             newdoc.save()
             return redirect('/documents' + parent.field_url())
-        else:
-            print("form not bvalis")
     else:
         form = group_forms.DocumentForm()
 
-    documents = group_models.Document.objects.all()
+    documents = parent.get_documents()
+    print(documents)
     return render(request,"documents.html", {'parent': parent, 'nodes': group_tree, 'documents': documents, 'form': form})
 
 @login_required(login_url="login/")

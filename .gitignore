@@ -4,8 +4,11 @@
 *.pyc
 __pycache__/
 migrations
+group_builder/apps/accounts/migrations/*
+group_builder/apps/accounts/migrations/*
 local_settings.py
 db.sqlite3
 media
 tmp
+group_builder/media
 

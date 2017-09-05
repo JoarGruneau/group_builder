@@ -19,14 +19,14 @@ class Group(MPTTModel):
             group__tree_id=self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).exists()
 
     def has_invitation(self, email, permission_type):
-        return Invitations.objects.filter(email = email, permission = permission_type).exists()
+        return Invitation.objects.filter(email = email, permission = permission_type).exists()
 
     #This function needs work since it can return the same member with number of times with different permissions
     def get_members(self):
         members = Permission.objects.filter(
             group__tree_id = self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).values(
               'user__first_name', 'user__last_name', 'user__email', 'permission')
-        innvited = Invitations.objects.filter(
+        innvited = Invitation.objects.filter(
             group__tree_id = self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).values(
               'email', 'permission')
         #members = User.objects.filter(id=perm.values('user__id'))
@@ -41,6 +41,9 @@ class Group(MPTTModel):
     def member_exsist(self, email):
         return Permission.objects.filter(user__email = email, group__tree_id=self.tree_id).exists()
 
+    def get_documents(self):
+        return Document.objects.filter(group__id = self.id)
+
 
 class Permission(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,)
@@ -52,7 +55,7 @@ class Permission(models.Model):
     permission_choice = ((READ, "read"), (UPLOAD, "upload"), (SUPER_USER, "super_user"))
     permission = models.PositiveIntegerField(choices = permission_choice, default = READ)
 
-class Invitations(models.Model):
+class Invitation(models.Model):
     email = models.EmailField(max_length=254, null=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     invited_by = models.ForeignKey(User, on_delete = models.CASCADE, related_name='invited_by')
@@ -60,4 +63,5 @@ class Invitations(models.Model):
 
 class Document(models.Model):
     docfile = models.FileField(upload_to='documents/%Y/%m/%d')
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
     
