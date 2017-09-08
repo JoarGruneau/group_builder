@@ -15,8 +15,18 @@
     // page is now ready, initialize the calendar...
 
     $('#calendar').fullCalendar({
-        // put your options and callbacks here
-    })
+    header: {
+        left: 'prev, today',
+        center: 'title',
+        right : 'month, agendaWeek, list, next'
+    },
+    firstDay: 1,
+    weekNumbers: true,
+    dayClick: function(date, jsEvent, view) {
+        window.location = "create/event{{parent.field_url}}";
+
+    }
+})
 
 });</script>
 {% endblock %}

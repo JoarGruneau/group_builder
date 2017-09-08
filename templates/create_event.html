@@ -1,0 +1,26 @@
+{% extends 'group_base.html' %}
+{% block javascript %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('.datepicker').datepicker({
+	dateFormat: "yy-mm-dd"
+});
+	$('.timepicker').timepicker();
+});
+</script>
+{% endblock %}
+{% block page %}
+<div class="home">
+    <form method="post">
+        {% csrf_token %}
+        Start Date:{{ form.start_date }}&nbsp;&nbsp; Start time:{{ form.start_time }} &nbsp;&nbsp; End Date:{{ form.end_date }}&nbsp;&nbsp; End time:{{ form.start_time }}
+        <input class="btn btn-success btn-sm" type="submit" value="Create event" />
+    </form>
+</div>
+{% endblock %}

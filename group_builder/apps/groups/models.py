@@ -44,6 +44,10 @@ class Group(MPTTModel):
     def get_documents(self):
         return Document.objects.filter(group__id = self.id)
 
+    def get_events():
+        events = Events.objects.filter(
+            group__tree_id = self.tree_id, group__lft__gte = self.lft, group__rght__lte = self.rght)
+
 
 class Permission(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,)
@@ -64,4 +68,11 @@ class Invitation(models.Model):
 class Document(models.Model):
     docfile = models.FileField(upload_to='documents/%Y/%m/%d')
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
+
+class Event(models.Model):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    start_date = models.DateField()
+    start_time = models.TimeField()
+    end_date = models.DateField()
+    end_time = models.TimeField()
     

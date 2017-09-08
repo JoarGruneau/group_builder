@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^timetables$', group_views.timetables, name='timetables'),
 	url(r'^create/group$', group_views.create_group, name='create_group'),
     url(r'^create/child$', group_views.create_child, name='create_child'),
+    url(r'^create/event$', group_views.create_event, name='create_event'),
 ]

@@ -1,4 +1,17 @@
+import group_builder.apps.groups.models as group_models
+
 from django import forms
+from functools import partial
+
+DateInput = partial(forms.DateInput, {'class': 'datepicker'})
+TimeInput  = partial(forms.TimeInput, {'class': 'timepicker'})
+
+class EventForm(forms.ModelForm):
+
+    class Meta:
+        model = group_models.Event
+        exclude = ('group', )
+        widgets = {'start_date': DateInput() , 'start_time': TimeInput(), 'end_date': DateInput(), 'end_time': TimeInput()}
 
 class CreateGroupForm(forms.Form):
     name = forms.CharField(label = "name", max_length = 100, required=True)
@@ -11,10 +24,14 @@ class CreateChildForm(forms.Form):
 
     name = forms.CharField(label = "name", max_length = 100, required=True)
 
-class MemberInvitationForm(forms.Form):        
-    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
+class InvitationForm(forms.ModelForm):
+    class Meta:
+        model = group_models.Invitation
+        fields =('email', )
 
-class DocumentForm(forms.Form):
-    docfile = forms.FileField(
-        label='Select a file',
-        help_text='max. 42 megabytes')
+    # email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
+
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = group_models.Document
+        fields =('docfile', )

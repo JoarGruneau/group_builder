@@ -58,7 +58,7 @@ def members(request):
     if(request.method == "GET"):
         parent, group_tree = lib_views.get_tree_info(request)
         members, invites = parent.get_members()
-        form = group_forms.MemberInvitationForm()
+        form = group_forms.InvitationForm()
         return render(request,"members.html", {'nodes': group_tree, 'parent': parent, 'members': members, 'invites': invites, 'form': form})
 
     elif(request.method == "POST"):
@@ -99,3 +99,20 @@ def timetables(request):
 @login_required(login_url="login/")
 def conversations(request):
     return render(request,"conversations.html")
+
+@login_required(login_url="login/")
+def create_event(request):
+    parent, group_tree = lib_views.get_tree_info(request)
+
+    if request.method == "POST":
+        form = group_forms.DocumentForm(request.POST)
+        if form.is_valid():
+            print("yasassas")
+            event = group_models.Document(start_date = form.start_date, start_time = form.start_time, 
+                end_date = form.end_date, end_time = form.end_time, group = parent)
+            event.save()
+
+    form = group_forms.EventForm()
+    return render(request,"create_event.html", {'parent': parent, 'nodes': group_tree, 'form': form})
+
+
