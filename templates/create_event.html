@@ -11,7 +11,9 @@ $(document).ready(function() {
     $('.datepicker').datepicker({
 	dateFormat: "yy-mm-dd"
 });
-	$('.timepicker').timepicker();
+	$('.timepicker').timepicker({
+        timeFormat: "HH:mm"
+    });
 });
 </script>
 {% endblock %}
@@ -19,7 +21,8 @@ $(document).ready(function() {
 <div class="home">
     <form method="post">
         {% csrf_token %}
-        Start Date:{{ form.start_date }}&nbsp;&nbsp; Start time:{{ form.start_time }} &nbsp;&nbsp; End Date:{{ form.end_date }}&nbsp;&nbsp; End time:{{ form.start_time }}
+        {{ form.as_p }}
+<!--         Start Date:{{ form.start_date }}&nbsp;&nbsp; Start time:{{ form.start_time }} &nbsp;&nbsp; End Date:{{ form.end_date }}&nbsp;&nbsp; End time:{{ form.start_time }} -->
         <input class="btn btn-success btn-sm" type="submit" value="Create event" />
     </form>
 </div>

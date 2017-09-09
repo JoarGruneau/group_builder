@@ -22,7 +22,7 @@
         <ul class="treeview">
             {% load mptt_tags %}
             {% recursetree nodes %}
-            <li><a href="/group{{ node.field_url }}">{{ node.name }}</a>
+            <li><a href="/group/{{ node.id }}">{{ node.name }}</a>
             {% if not node.is_leaf_node %}
                 <ul class="children">
                     {{ children }}

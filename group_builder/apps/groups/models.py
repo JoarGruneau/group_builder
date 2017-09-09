@@ -44,8 +44,8 @@ class Group(MPTTModel):
     def get_documents(self):
         return Document.objects.filter(group__id = self.id)
 
-    def get_events():
-        events = Events.objects.filter(
+    def get_events(self):
+        return Event.objects.filter(
             group__tree_id = self.tree_id, group__lft__gte = self.lft, group__rght__lte = self.rght)
 
 
@@ -71,8 +71,8 @@ class Document(models.Model):
 
 class Event(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    start_date = models.DateField()
-    start_time = models.TimeField()
-    end_date = models.DateField()
-    end_time = models.TimeField()
+    start_date = models.CharField(max_length=100)
+    start_time = models.CharField(max_length=100)
+    end_date = models.CharField(max_length=100)
+    end_time = models.CharField(max_length=100)
     

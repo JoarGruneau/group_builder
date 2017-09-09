@@ -22,10 +22,22 @@
     },
     firstDay: 1,
     weekNumbers: true,
+    defaultView: 'agendaWeek',
     dayClick: function(date, jsEvent, view) {
-        window.location = "create/event{{parent.field_url}}";
+        window.location = "/create/event/{{parent.id}}";
 
-    }
+    },
+    events:      [
+    {% for event in events %}
+        {
+            title:  'My Event',
+            start:  "{{event.start_date}}T{{event.start_time}}",
+            end:  "{{event.end_date}}T{{event.end_time}}",
+            allDay: false
+
+        },
+    {% endfor %}
+    ]
 })
 
 });</script>

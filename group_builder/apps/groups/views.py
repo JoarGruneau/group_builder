@@ -1,5 +1,5 @@
 import sys, traceback
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 import group_builder.apps.groups.models as group_models
@@ -27,25 +27,25 @@ def create_group(request):
         return render(request,"create_group.html", {'form': form})
 
 @login_required(login_url = "login/")
-def create_child(request):
+def create_child(request, group_id):
     if(request.method == "POST"):
-        parent = group_models.Group.objects.get(id = request.POST.get("parent", ""))
+        parent = group_models.Group.objects.get(id = group_id)
 
         if(parent.has_permission(request.user, group_models.Permission.SUPER_USER)):
             name = request.POST.get("name", "")
             group_models.Group.objects.create(name = name, parent = parent)
         return redirect('home')
     elif(request.method == "GET"):
-        form = group_forms.CreateChildForm(id = request.GET.get("id", ""))
+        form = group_forms.CreateChildForm(id = group_id)
         return render(request,"create_group.html", {'form': form})
 
 
 
 @login_required(login_url="login/")
-def group(request):
+def group(request, group_id):
     if(request.method == "GET"):
         try:
-            parent, group_tree = lib_views.get_tree_info(request)
+            parent, group_tree = lib_views.get_tree_info(request, group_id)
             return render(request,"group_base.html", {'nodes': group_tree, 'parent': parent})
         except Exception:
             print ("Exception in user code:")
@@ -54,16 +54,14 @@ def group(request):
             return redirect('home')
 
 @login_required(login_url="login/")
-def members(request):
-    if(request.method == "GET"):
-        parent, group_tree = lib_views.get_tree_info(request)
-        members, invites = parent.get_members()
-        form = group_forms.InvitationForm()
-        return render(request,"members.html", {'nodes': group_tree, 'parent': parent, 'members': members, 'invites': invites, 'form': form})
+def members(request, group_id):
+    parent, group_tree = lib_views.get_tree_info(request, group_id)
 
-    elif(request.method == "POST"):
+    if(request.method == "POST"):
+        form = group_forms.InvitationForm(request.POST)
+
         email = request.POST.get("email", "")
-        parent = group_models.Group.objects.get(id = request.GET.get("id", ""))
+        parent = group_models.Group.objects.get(id = group_id)
 
         if parent.has_permission(request.user, group_models.Permission.SUPER_USER):
             if(parent.member_exsist(email)):
@@ -72,18 +70,24 @@ def members(request):
                 if not parent.has_invitation(email = email, permission_type = group_models.Permission.SUPER_USER):
                     group_models.Invitation.objects.create(email = email, group =parent, 
                         invited_by = request.user, permission = group_models.Permission.SUPER_USER)
-        return redirect('/members' + parent.field_url())
+        return redirect(reverse('members', args = [group_id]))
+
+    else:
+        members, invites = parent.get_members()
+        form = group_forms.InvitationForm()
+        return render(request,"members.html", {'nodes': group_tree, 'parent': parent, 'members': members, 'invites': invites, 'form': form})
+
 
 
 @login_required(login_url="login/")
-def documents(request):
-    parent, group_tree = lib_views.get_tree_info(request)
+def documents(request, group_id):
+    parent, group_tree = lib_views.get_tree_info(request, group_id)
     if request.method == 'POST':
         form = group_forms.DocumentForm(request.POST, request.FILES)
         if form.is_valid():
             newdoc = group_models.Document(docfile = request.FILES['docfile'], group = parent)
             newdoc.save()
-            return redirect('/documents' + parent.field_url())
+            return redirect(reverse('documents', args = [group_id]))
     else:
         form = group_forms.DocumentForm()
 
@@ -92,27 +96,30 @@ def documents(request):
     return render(request,"documents.html", {'parent': parent, 'nodes': group_tree, 'documents': documents, 'form': form})
 
 @login_required(login_url = "login/")
-def timetables(request):
-    parent, group_tree = lib_views.get_tree_info(request)
-    return render(request,"timetables.html", {'parent': parent, 'nodes': group_tree})
+def timetables(request, group_id):
+    parent, group_tree = lib_views.get_tree_info(request, group_id)
+    events = parent.get_events()
+    return render(request,"timetables.html", {'parent': parent, 'nodes': group_tree, 'events': events})
 
 @login_required(login_url="login/")
-def conversations(request):
+def conversations(request, group_id):
     return render(request,"conversations.html")
 
 @login_required(login_url="login/")
-def create_event(request):
-    parent, group_tree = lib_views.get_tree_info(request)
+def create_event(request, group_id):
+    parent, group_tree = lib_views.get_tree_info(request, group_id)
 
     if request.method == "POST":
-        form = group_forms.DocumentForm(request.POST)
+        form = group_forms.EventForm(request.POST)
+        form.group = parent
         if form.is_valid():
-            print("yasassas")
-            event = group_models.Document(start_date = form.start_date, start_time = form.start_time, 
-                end_date = form.end_date, end_time = form.end_time, group = parent)
+            event = form.save(commit=False)
+            event.group = parent
             event.save()
+        return redirect(reverse('timetables', args = [group_id]))
 
-    form = group_forms.EventForm()
-    return render(request,"create_event.html", {'parent': parent, 'nodes': group_tree, 'form': form})
+    else:
+        form = group_forms.EventForm()
+        return render(request,"create_event.html", {'parent': parent, 'nodes': group_tree, 'form': form})
 
 
