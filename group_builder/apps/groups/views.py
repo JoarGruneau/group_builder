@@ -8,11 +8,15 @@ import group_builder.apps.groups.lib_views as lib_views
 
 @login_required(login_url="login/")
 def home(request):
-    permissions = group_models.Permission.objects.filter(user = request.user)
-    groups = []
-    for permission in permissions:
-        groups = groups + list(permission.group.get_descendants(include_self=True))
+    groups = lib_views.get_all_groups(request)
     return render(request,"home.html", {'nodes': groups})
+
+@login_required(login_url="login/")
+def invitations(request):
+    groups = lib_views.get_all_groups(request)
+    invitations = group_models.Invitation.objects.filter(email = request.user.email)
+    return render(request,"invitations.html", {'nodes': groups, 'invitations': invitations})
+
 
 @login_required(login_url="login/")
 def create_group(request):

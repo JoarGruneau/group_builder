@@ -4,6 +4,7 @@ import group_builder.apps.groups.views as group_views
 
 urlpatterns = [
     url(r'^$', group_views.home, name='home'),
+    url(r'^invitations$', group_views.invitations, name='invitations'),
     url(r'^group/(?P<group_id>[0-9]*)$', group_views.group, name='group'),
     url(r'^conversations/(?P<group_id>[0-9]*)$', group_views.conversations, name='conversations'),
     url(r'^members/(?P<group_id>[0-9]*)$', group_views.members, name='members'),
