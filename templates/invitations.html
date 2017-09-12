@@ -1,8 +1,15 @@
 {% extends 'base_tree_view.html' %}
 {% block content %}
     <div class="list-group">
+    <table>
+    <tr>
         {% for invitation in invitations %}
-             <a href="{{ invitation }}" class="list-group-item">{{invitation.invited_by}} Permission: {{invitation.permission}}</a>
+             <td><a href="{{ invitation }}" class="list-group-item">{{invitation.group.name}} {{invitation.invited_by}} {{invitation.permission}}</a></td>
+             <td><form action = "invitations/response/0/{{invitation.group.id}}""><input class="btn btn-success btn-sm" type="submit" value="decline"/></form></td>
+            <td><form action = "invitations/response/1/{{invitation.group.id}}""><input class="btn btn-success btn-sm" type="submit" value="accept"/></form></td>
         {% endfor %}
+    </tr>
+    </table>
     </div>
 {% endblock %}
+invitation.group

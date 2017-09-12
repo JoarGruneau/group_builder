@@ -38,8 +38,11 @@ class Group(MPTTModel):
             'user__first_name', 'user__last_name', 'user__email').distinct()
         return members
 
-    def member_exsist(self, email):
+    def member_in_tree(self, email):
         return Permission.objects.filter(user__email = email, group__tree_id=self.tree_id).exists()
+
+    def add_member(self, user, permission):
+        Permission.objects.create(user = user, group = self, permission = permission)
 
     def get_documents(self):
         return Document.objects.filter(group__id = self.id)
@@ -51,7 +54,7 @@ class Group(MPTTModel):
 
 class Permission(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,)
-    group = models.OneToOneField(Group, on_delete=models.CASCADE,)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE,)
 
     READ = 1
     UPLOAD = 2
