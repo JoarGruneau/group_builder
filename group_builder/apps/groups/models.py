@@ -11,15 +11,16 @@ class Group(MPTTModel):
     class MPTTMeta:
         order_insertion_by = ['name']
 
-    def field_url(self):
-        return "?id="+str(self.id)
     
     def has_permission(self, user, permission_type):
         return Permission.objects.filter(user = user, permission__gte = permission_type,
             group__tree_id=self.tree_id, group__lft__lte = self.lft, group__rght__gte = self.rght).exists()
 
-    def has_invitation(self, email, permission_type):
-        return Invitation.objects.filter(email = email, permission = permission_type).exists()
+    def add_invitation(self, request_user, email, permission):
+        Invitation.objects.filter(email = email, group__tree_id=self.tree_id, group__lft__gte = self.lft, 
+            group__rght__lte = self.rght, permission__lte = permission).delete()
+        Invitation.objects.create(email = email, group = self, invited_by = request_user, permission = permission)
+
 
     #This function needs work since it can return the same member with number of times with different permissions
     def get_members(self):
@@ -39,9 +40,15 @@ class Group(MPTTModel):
         return members
 
     def member_in_tree(self, email):
+        print(email)
+        perms = self.get_descendants(include_self = True)
+        for perm in perms:
+            print(perm.tree_id)
+        print(Permission.objects.filter(user__email = email).exists())
         return Permission.objects.filter(user__email = email, group__tree_id=self.tree_id).exists()
 
     def add_member(self, user, permission):
+        Permission.objects.filter(user = user, group__tree_id=self.tree_id, group__lft__gte = self.lft, group__rght__lte = self.rght, permission__lte = permission).delete()
         Permission.objects.create(user = user, group = self, permission = permission)
 
     def get_documents(self):
@@ -78,4 +85,13 @@ class Event(models.Model):
     start_time = models.CharField(max_length=100)
     end_date = models.CharField(max_length=100)
     end_time = models.CharField(max_length=100)
+
+class Post(models.Model):
+    replies_to = models.ForeignKey('self', on_delete=models.CASCADE, null = True)
+    sender = models.ForeignKey(User)
+    time = models.DateTimeField(default=timezone.now)
+    message =  models.TextField()
+
+
+
     

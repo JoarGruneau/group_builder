@@ -1,19 +1,24 @@
 import group_builder.apps.groups.models as group_models
 from django.core.exceptions import PermissionDenied
+from django.contrib.auth.models import User
 
-def get_all_groups(request):
-    permissions = group_models.Permission.objects.filter(user = request.user)
+def get_all_groups(request_user):
+    permissions = group_models.Permission.objects.filter(user = request_user)
     groups = []
     for permission in permissions:
         groups = groups + list(permission.group.get_descendants(include_self=True))
     return groups
 
-def get_group(group_id):
-    return group_models.Group.objects.get(id = group_id)
+def get_group(request_user, group_id):
+    group = group_models.Group.objects.get(id = group_id)
+    if group.has_permission(request_user, group_models.Permission.READ):
+        return group
+    else:
+        PermissionDenied("User: " + request_user.email + " does not have permission to view this group")
 
-def get_tree_info(request, group_id):
-    group = get_group(group_id)
-    if group.has_permission(request.user, group_models.Permission.READ):
+def get_tree_info(request_user, group_id):
+    group = get_group(request_user, group_id)
+    if group.has_permission(request_user, group_models.Permission.READ):
         tree = group.get_descendants(include_self=True)
         return group, tree
     else:
@@ -25,16 +30,25 @@ def add_parent_and_save(form, parent):
         model.parent = parent
         model.save()
 
-def handle_invitation_response(user, answer, group_id):
-    group = get_group(group_id)
-    invitations = list(group_models.Invitation.objects.filter(email = user.email, group = group))
+def handle_invite(request_user, group, email, permission):
+    if group.has_permission(request_user, group_models.Permission.SUPER_USER):
+        if(group.member_in_tree(email)):
+            invited_user = User.objects.get(email = email)
+            group.add_member(invited_user, permission)
+        else:
+            group.add_invitation(request_user, email, permission)
+    else:
+        PermissionDenied()
+
+
+def handle_invitation_response(request_user, answer, group_id):
+    group = get_group(request_user, group_id)
+    invitations = list(group_models.Invitation.objects.filter(email = request_user.email, group = group))
     if(len(invitations) == 1):
         invitation = invitations[0]
         if answer == "1":
-            group_models.Permission.objects.create(user = user, group = group, permission = invitation.permission)
+            group_models.Permission.objects.create(user = request_user, group = group, permission = invitation.permission)
 
-        print(invitation.id)
-        print(group_models.Permission.objects.filter(id = invitation.id))
         group_models.Invitation.objects.filter(id = invitation.id).delete()
 
     else:

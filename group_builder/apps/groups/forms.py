@@ -35,3 +35,8 @@ class DocumentForm(forms.ModelForm):
     class Meta:
         model = group_models.Document
         fields =('docfile', )
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = group_models.Post
+        fields = ('message',)
