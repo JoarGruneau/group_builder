@@ -23,9 +23,8 @@
 	</head>
 
 	<body>
-
 	<nav class="navbar navbar-default">
-	  <div class="container-fluid">
+    <div class="container-fluid">
 	    <div class="navbar-header">
 	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
 	        <span class="sr-only">Toggle navigation</span>
@@ -37,8 +36,6 @@
 	    </div>
 
 	    <ul class="nav navbar-nav">
-	      <li class="active"><a href="/my_groups">My groups</a></li>
-	      <li><a href="/participating_groups">Participating groups</a></li>
 	      <li><a href="/invitations">Invitations</a></li>
 	      <li><a href="/settings">Notifications</a></li>
 	      <li><a href="/create/group">Create new group</a></li>
@@ -62,17 +59,15 @@
 
 	      </ul>
 	    </div>
-	  </div>
 
 	</nav>
 		{% block content %}
 		{% endblock %}
-		{% block group_view %}
-	    {% endblock %}
 		{% block tree_view %}
 		{% endblock %}
 
 		{% block javascript_end %}
 		{% endblock %}
+</div>
 
 	</html>

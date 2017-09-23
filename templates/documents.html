@@ -1,6 +1,5 @@
 {% extends 'group_base.html' %}
 {% block page %}
-<div class="home">
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
             <p>{{ form.non_field_errors }}</p>
@@ -17,5 +16,4 @@
              <a href="{{ document.docfile.url }}" class="list-group-item">{{document.docfile.name}}</a>
         {% endfor %}
     </div>
-</div>
 {% endblock %}
