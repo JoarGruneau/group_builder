@@ -10,7 +10,6 @@ class Group(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ['name']
-
     
     def has_permission(self, user, permission_type):
         return Permission.objects.filter(user = user, permission__gte = permission_type,
@@ -32,6 +31,10 @@ class Group(MPTTModel):
               'email', 'permission')
         #members = User.objects.filter(id=perm.values('user__id'))
         return members, innvited
+
+    def get_member_types(self):
+        all_members = Group.objects.get( tree_id = self.tree_id, name ="all members")
+        return all_members.get_descendants
 
     def get_all_members(self):
         members = Permission.objects.filter(
@@ -58,6 +61,11 @@ class Group(MPTTModel):
         return Event.objects.filter(
             group__tree_id = self.tree_id, group__lft__gte = self.lft, group__rght__lte = self.rght)
 
+# class Root(models.Model):
+#     name = models.CharField(max_length=100)
+#     mptt_root = models.ForeignKey(Group,)
+#     all_members = models.ForeignKey(Group,)
+#     tree = models.PositiveIntegerField()
 
 class Permission(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,)

@@ -9,10 +9,12 @@ urlpatterns = [
     url(r'^group/(?P<group_id>[0-9]*)$', group_views.group, name='group'),
     url(r'^conversations/(?P<group_id>[0-9]*)$', group_views.conversations, name='conversations'),
     url(r'^members/(?P<group_id>[0-9]*)$', group_views.members, name='members'),
+    url(r'^members/(?P<group_id>[0-9]*)/add$', group_views.add_members, name='add_members'),
     url(r'^documents/(?P<group_id>[0-9]*)$', group_views.documents, name='documents'),
     url(r'^conversations/(?P<group_id>[0-9]*)$', group_views.conversations, name='conversations'),
     url(r'^timetables/(?P<group_id>[0-9]*)$', group_views.timetables, name='timetables'),
 	url(r'^create/group$', group_views.create_group, name='create_group'),
     url(r'^create/child/(?P<group_id>[0-9]*)$', group_views.create_child, name='create_child'),
     url(r'^create/event/(?P<group_id>[0-9]*)$', group_views.create_event, name='create_event'),
+    url(r'^api/get_email_addresses/(?P<group_id>[0-9]*)$', group_views.get_email_addresses),
 ]

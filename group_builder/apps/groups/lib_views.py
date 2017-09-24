@@ -24,6 +24,18 @@ def get_tree_info(request_user, group_id):
     else:
         raise PermissionDenied()
 
+def get_member_group(request_user, group):
+    return group_models.Group.objects.get(tree_id = group.tree_id, name ="all members")
+
+def get_member_types(request_user, group):
+    return list(get_member_group(request_user, group).get_descendants(include_self=False).values('name'))
+
+def get_members_email(request_user, group_id):
+    group = get_group(request_user, group_id)
+    all_members = get_member_group(request_user, group)
+    return group_models.Permission.objects.filter(group = all_members, group__lft__gte = all_members.lft, group__rght__lte = all_members.rght).values('user__email')
+
+
 def add_parent_and_save(form, parent):
     if form.is_valid():
         model = form.save(commit=False)

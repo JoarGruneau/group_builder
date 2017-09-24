@@ -1,14 +1,6 @@
 {% extends 'group_base.html' %}
-{% block page %}
-{% load static %}
-<link rel='stylesheet' href="{% static 'css/fullcalendar.min.css' %}"/>
-<script src="{% static 'js/jquery.min.js' %}"></script>
-<script src="{% static 'js/moment.min.js' %}"></script>
-<script src="{% static 'js/fullcalendar.min.js' %}"></script>
-<div id='calendar'>
-</div>
-{% endblock %}
-{% block javascript %}
+
+{% block js_head %}
 <script>
     $(document).ready(function() {
 
@@ -43,3 +35,11 @@
 });</script>
 {% endblock %}
 
+{% block page %}
+{% load static %}
+<link rel='stylesheet' href="{% static 'css/fullcalendar.min.css' %}"/>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/moment.min.js' %}"></script>
+<script src="{% static 'js/fullcalendar.min.js' %}"></script>
+<div id='calendar'></div>
+{% endblock %}

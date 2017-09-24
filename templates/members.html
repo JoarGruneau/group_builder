@@ -1,10 +1,11 @@
 {% extends 'group_base.html' %}
 {% block page %}
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input class="btn btn-success btn-sm" type="submit" value="Add member" />
-    </form>
+<table>
+    <tr>    
+        <td><form action="{{parent.id}}/add">  <input class="btn btn-success btn-sm" type="submit" value="Add members" /></form></td>
+        <td><form action="manage">  <input class="btn btn-success btn-sm" type="submit" value="Manage members" /></form></td>
+    </tr>
+</table>
     <div class="list">
         {% for member in members %}
              <a href="#" class="list-group-item">{{member.user__first_name}} {{member.user__last_name}}     email: {{member.user__email}} permission: {{member.permission}}</a>

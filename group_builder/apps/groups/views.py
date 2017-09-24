@@ -1,5 +1,5 @@
 import sys, traceback
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
@@ -65,6 +65,12 @@ def group(request, group_id):
 @login_required(login_url="login/")
 def members(request, group_id):
     group, group_tree = lib_views.get_tree_info(request.user, group_id)
+    members, invites = group.get_members()
+    return render(request,"members.html", {'nodes': group_tree, 'parent': group, 'members': members, 'invites': invites,})
+
+@login_required(login_url="login/")
+def add_members(request, group_id):
+    group, group_tree = lib_views.get_tree_info(request.user, group_id)
 
     if(request.method == "POST"):
         email = request.POST.get("email", "")
@@ -73,10 +79,11 @@ def members(request, group_id):
         return redirect(reverse('members', args = [group_id]))
 
     else:
-        members, invites = group.get_members()
-        form = group_forms.InvitationForm()
-        return render(request,"members.html", {'nodes': group_tree, 'parent': group, 'members': members, 'invites': invites, 'form': form})
-
+        all_members = group_models.Group.objects.get(tree_id = group.tree_id, name ="all members")
+        member_types = list(all_members.get_descendants(include_self=False).values('name'))
+        print(member_types)
+        form = group_forms.InvitationForm(member_types = member_types)
+        return render(request,"add_members.html", {'nodes': group_tree, 'parent': group, 'form': form})
 
 
 @login_required(login_url="login/")
@@ -130,5 +137,29 @@ def create_event(request, group_id):
     else:
         form = group_forms.EventForm()
         return render(request,"create_event.html", {'parent': parent, 'nodes': group_tree, 'form': form})
+
+import json
+@login_required(login_url="login/")
+def get_email_addresses(request, group_id):
+    email_addresses = lib_views.get_members_email(request.user, group_id)
+    print(email_addresses)
+
+    if request.is_ajax():
+        q = request.GET.get('term', '')
+
+        matches = [c['email'] for c in email_addresses if q in c['email']]
+        matches = set(matches)
+
+        results = []
+        for cn in matches:
+            cn_json = {'value': cn}
+            results.append(cn_json)
+        data = json.dumps(results)
+        print(data)
+    else:
+        print("hadddlå")
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
 
 

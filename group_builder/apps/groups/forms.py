@@ -25,6 +25,19 @@ class CreateChildForm(forms.Form):
     name = forms.CharField(label = "name", max_length = 100, required=True)
 
 class InvitationForm(forms.ModelForm):
+    def __init__(self, *args,**kwargs):
+        member_types = kwargs.pop('member_types')
+        super(InvitationForm, self).__init__(*args,**kwargs)
+        member_choices = group_models.Permission.permission_choice
+        for element in member_types:
+            member_type = element['name']
+            member_choices += ((member_type, member_type), )
+
+        print(member_choices)
+        self.fields['member_choises'] = forms.ChoiceField(choices= member_choices)
+
+    # member_choices = group_models.Permission.permission_choice
+    # member_type = forms.ChoiceField(choices= member_choices)
     class Meta:
         model = group_models.Invitation
         fields =('email', )

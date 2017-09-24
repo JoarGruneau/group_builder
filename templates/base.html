@@ -18,9 +18,9 @@
 	    <script src="{% static 'js/jquery.min.js' %}"></script>
 	    <script src = "{% static 'js/bootstrap.min.js' %}"></script>
 
-	    {% block css %}
+	    {% block css_head %}
 	    {% endblock %}
-	   	{% block javascript %}
+	   	{% block js_head %}
 	    {% endblock %}
 	</head>
 
@@ -38,6 +38,7 @@
 	    </div>
 
 	    <ul class="nav navbar-nav">
+          <li><a href="#menu-toggle" class="btn btn-secondary" id="menu-toggle">Toggle Menu</a></li>
 	      <li><a href="/invitations">Invitations</a></li>
 	      <li><a href="/settings">Notifications</a></li>
 	      <li><a href="/create/group">Create new group</a></li>
@@ -63,11 +64,8 @@
 	    </div>
     </div>
 	</nav>
-		{% block tree_view %}
+		{% block content %}
 		{% endblock %}
+	</body>
 
-		{% block javascript_end %}
-		{% endblock %}
-</body>
-
-	</html>
+</html>
