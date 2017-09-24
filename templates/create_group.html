@@ -1,20 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'base_tree_view.html' %}
 
-{% block content %}
+{% block page %}
   <h2>Create a new group</h2>
   <form method="post" actiion = >
     {% csrf_token %}
     {{ form.as_p }}
     <input class="btn btn-success btn-sm" type="submit" value="create group" />
   </form>
-{% endblock %}
-
-{% block javascript %}
-
-<script>
-{% if not user.is_authenticated %}
-$("ul.nav.navbar-nav.navbar-right").css("display","none");
-{% endif %}
-</script>
-
 {% endblock %}

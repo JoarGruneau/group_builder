@@ -29,6 +29,8 @@ def invitation_response(request, answer, group_id):
 
 @login_required(login_url="login/")
 def create_group(request):
+    groups = lib_views.get_all_groups(request.user)
+
     if(request.method == "POST"):
         group = group_models.Group.objects.create(name = request.POST.get("name", ""))
         group_models.Permission.objects.create(user = request.user, group = group, permission = group_models.Permission.SUPER_USER)
@@ -36,11 +38,12 @@ def create_group(request):
         return redirect('home')
     else:
         form = group_forms.CreateGroupForm()
-        return render(request,"create_group.html", {'form': form})
+        return render(request,"create_group.html", {'nodes': groups, 'form': form})
 
 
 @login_required(login_url = "login/")
 def create_child(request, group_id):
+    parent, group_tree = lib_views.get_tree_info(request.user, group_id)
     if(request.method == "POST"):
         parent = group_models.Group.objects.get(id = group_id)
 
@@ -50,7 +53,7 @@ def create_child(request, group_id):
         return redirect('home')
     else:
         form = group_forms.CreateChildForm(id = group_id)
-        return render(request,"create_group.html", {'form': form})
+        return render(request,"create_group.html", {'nodes': group_tree, 'parent': group, 'form': form})
 
 
 

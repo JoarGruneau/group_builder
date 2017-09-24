@@ -2,18 +2,15 @@
 
 {% block group_view %}
 
-{% load static %}
-<link rel="stylesheet" href="{% static 'css/group_base.css' %}">
-
 {% load mptt_tags %}
-        <nav class="navbar navbar-default">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="/groups{{parent.idl}}">Overview</a></li>
-            <li><a href="/members/{{parent.id}}">Members</a></li>
-            <li><a href="/conversations/{{parent.id}}">Conversations</a></li>
-            <li><a href="/documents/{{parent.id}}">Documents</a></li>
-            <li><a href="/timetables/{{parent.id}}">Timetables</a></li>
-            <li><a href="/create/child/{{parent.id}}">Create child</a></li>
-          </ul>
-          </nav>
+  <nav class="navbar navbar-default">
+    <ul class="nav navbar-nav">
+      <li><a href="/groups{{parent.idl}}">Overview</a></li>
+      <li><a href="/members/{{parent.id}}">Members</a></li>
+      <li><a href="/conversations/{{parent.id}}">Conversations</a></li>
+      <li><a href="/documents/{{parent.id}}">Documents</a></li>
+      <li><a href="/timetables/{{parent.id}}">Timetables</a></li>
+      <li><a href="/create/child/{{parent.id}}">Create child</a></li>
+    </ul>
+  </nav>
 {% endblock %}
