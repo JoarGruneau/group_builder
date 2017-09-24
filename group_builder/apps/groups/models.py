@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.utils import timezone
 from group_builder.apps.mptt.models import MPTTModel, TreeForeignKey
@@ -74,7 +75,7 @@ class Permission(models.Model):
     READ = 1
     UPLOAD = 2
     SUPER_USER = 3
-    permission_choice = ((READ, "read"), (UPLOAD, "upload"), (SUPER_USER, "super_user"))
+    permission_choice = ((READ, "read"), (UPLOAD, "upload"), (SUPER_USER, "super user"))
     permission = models.PositiveIntegerField(choices = permission_choice, default = READ)
 
 class Invitation(models.Model):
@@ -85,7 +86,12 @@ class Invitation(models.Model):
 
 class Document(models.Model):
     docfile = models.FileField(upload_to='documents/%Y/%m/%d')
+    uploaded = models.DateTimeField(default=timezone.now)
+    last_eddited = models.DateTimeField(default=timezone.now, null=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
+
+    def filename(self):
+        return os.path.basename(self.docfile.name)
 
 class Event(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)

@@ -33,14 +33,14 @@ class InvitationForm(forms.ModelForm):
             member_type = element['name']
             member_choices += ((member_type, member_type), )
 
-        print(member_choices)
-        self.fields['member_choises'] = forms.ChoiceField(choices= member_choices)
+        self.fields['member_choices'] = forms.ChoiceField(choices= member_choices)
 
     # member_choices = group_models.Permission.permission_choice
     # member_type = forms.ChoiceField(choices= member_choices)
     class Meta:
         model = group_models.Invitation
         fields =('email', )
+        widgets = {'email': forms.TextInput(attrs={'id': 'autocomplete-email'})}
 
     # email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
 

@@ -147,7 +147,7 @@ def get_email_addresses(request, group_id):
     if request.is_ajax():
         q = request.GET.get('term', '')
 
-        matches = [c['email'] for c in email_addresses if q in c['email']]
+        matches = [c['user__email'] for c in email_addresses if q in c['user__email']]
         matches = set(matches)
 
         results = []

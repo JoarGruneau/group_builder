@@ -10,9 +10,10 @@
         {% csrf_token %}
         <div class="ui-widget">
             <label for="emails">Email: </label>
-            <input id="autocomplete-email">
+            {{form.email}}
         </div>
-        {{ form.as_p }}
+        <label for="member_choices">Member choices: </label>
+        {{form.member_choices}}
         <input class="btn btn-success btn-sm" type="submit" value="Add member" />
     </form>
 
