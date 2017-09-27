@@ -2,13 +2,6 @@ import group_builder.apps.groups.models as group_models
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
 
-def get_all_groups(request_user):
-    permissions = group_models.Permission.objects.filter(user = request_user)
-    groups = []
-    for permission in permissions:
-        groups = groups + list(permission.group.get_descendants(include_self=True))
-    return groups
-
 def get_group(request_user, group_id):
     group = group_models.Group.objects.get(id = group_id)
     if group.has_permission(request_user, group_models.Permission.READ):
@@ -23,6 +16,18 @@ def get_tree_info(request_user, group_id):
         return group, tree
     else:
         raise PermissionDenied()
+
+def get_all_groups(request_user):
+    permissions = group_models.Permission.objects.filter(user = request_user)
+    groups = []
+    for permission in permissions:
+        groups = groups + list(permission.group.get_descendants(include_self=True))
+    return groups
+    group = group_models.Group.objects.get(id = group_id)
+
+def get_group_base_info(request_user, group_id):
+    group, tree = get_tree_info(request_user, group_id)
+    return group, tree, group.get_rooms()
 
 def get_member_group(request_user, group):
     return group_models.Group.objects.get(tree_id = group.tree_id, name ="all members")

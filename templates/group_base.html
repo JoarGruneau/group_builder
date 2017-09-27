@@ -5,12 +5,9 @@
 {% load mptt_tags %}
   <nav class="navbar navbar-default">
     <ul class="nav navbar-nav">
-      <li><a href="/groups{{parent.idl}}">Overview</a></li>
-      <li><a href="/members/{{parent.id}}">Members</a></li>
-      <li><a href="/conversations/{{parent.id}}">Conversations</a></li>
-      <li><a href="/documents/{{parent.id}}">Documents</a></li>
-      <li><a href="/timetables/{{parent.id}}">Timetables</a></li>
-      <li><a href="/create/child/{{parent.id}}">Create child</a></li>
+    {% for room in rooms %}
+      <li><a href="{% url room.get_room_display group_id=parent.id%}">{{room.get_room_display}}</a></li>
+    {% endfor %}
     </ul>
   </nav>
 {% endblock %}

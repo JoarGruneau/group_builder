@@ -9,8 +9,20 @@ class Group(MPTTModel):
     name = models.CharField(max_length=50)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
 
+    DEFAULT = 0
+    MEMBER_GROUP = 1
+    MEMBER_SUB = 2
+    ONE__MANY = 3
+    SPECIAL_ACCESS = 4
+    group_choices = ((DEFAULT, "default"), (MEMBER_GROUP, "all members"), (MEMBER_SUB, "members"), 
+        (ONE__MANY, "one to many"), (SPECIAL_ACCESS, "special access"))
+    group_type = models.PositiveIntegerField(choices = group_choices, default = DEFAULT)
+
     class MPTTMeta:
         order_insertion_by = ['name']
+
+    def get_rooms(self):
+        return Group_room.objects.filter(group = self)
     
     def has_permission(self, user, permission_type):
         return Permission.objects.filter(user = user, permission__gte = permission_type,
@@ -44,11 +56,7 @@ class Group(MPTTModel):
         return members
 
     def member_in_tree(self, email):
-        print(email)
         perms = self.get_descendants(include_self = True)
-        for perm in perms:
-            print(perm.tree_id)
-        print(Permission.objects.filter(user__email = email).exists())
         return Permission.objects.filter(user__email = email, group__tree_id=self.tree_id).exists()
 
     def add_member(self, user, permission):
@@ -62,11 +70,14 @@ class Group(MPTTModel):
         return Event.objects.filter(
             group__tree_id = self.tree_id, group__lft__gte = self.lft, group__rght__lte = self.rght)
 
-# class Root(models.Model):
-#     name = models.CharField(max_length=100)
-#     mptt_root = models.ForeignKey(Group,)
-#     all_members = models.ForeignKey(Group,)
-#     tree = models.PositiveIntegerField()
+class Group_room(models.Model):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE,)
+    choices = ((1,"overview"), (2, "members"), (3, "posts"), (4, "chat"), (5, "documents"), (6, "timetables"))
+    room = models.IntegerField(choices = choices)
+
+class Group_member_type():
+    group = models.ForeignKey(Group, on_delete=models.CASCADE,)
+    member_type = models.ForeignKey(Group, on_delete=models.CASCADE,)
 
 class Permission(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,)
