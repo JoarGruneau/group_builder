@@ -27,13 +27,23 @@ def get_all_groups(request_user):
 
 def get_group_base_info(request_user, group_id):
     group, tree = get_tree_info(request_user, group_id)
-    return group, tree, group.get_rooms()
+    is_super_user = group_models.Permission.objects.filter(user = request_user, permission = group_models.Permission.SUPER_USER,
+        group__tree_id=group.tree_id, group__lft__lte = group.lft, group__rght__gte = group.rght).exists()
+    return {'super_user': is_super_user, 'parent': group, 'nodes': tree, 'rooms': group.get_rooms()}
 
-def get_member_group(request_user, group):
-    return group_models.Group.objects.get(tree_id = group.tree_id, name ="all members")
+def get_member_types(group):
+    member_groups = group_models.Group.objects.filter(tree_id = group.tree_id, group_type = group_models.Group.MEMBER_SUB)
+    result = []
+    for member_group in member_groups:
+        result += [[member_group.id, member_group.name],]
 
-def get_member_types(request_user, group):
-    return list(get_member_group(request_user, group).get_descendants(include_self=False).values('name'))
+    for i in range(len(member_groups) - 1, -1, -1):
+        group = member_groups[i]
+        for j in range(len(member_groups) - 1, i - 1, -1):
+            sub_group = member_groups[j]
+            if (sub_group.lft > group.lft and sub_group.rght < group.rght):
+                result[j][1] = group.name + '/' + result[j][1]
+    return result
 
 def get_members_email(request_user, group_id):
     group = get_group(request_user, group_id)

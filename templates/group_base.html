@@ -8,6 +8,11 @@
     {% for room in rooms %}
       <li><a href="{% url room.get_room_display group_id=parent.id%}">{{room.get_room_display}}</a></li>
     {% endfor %}
+    {% if super_user %}
+        <li><a href="{% url 'members' group_id=parent.id%}">members</a></li>
+        <li><a href="{% url 'create child' group_id=parent.id%}">create child</a></li>
+    {% endif %}
+
     </ul>
   </nav>
 {% endblock %}

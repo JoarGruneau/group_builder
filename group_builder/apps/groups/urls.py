@@ -15,7 +15,7 @@ urlpatterns = [
     url(r'^chat/(?P<group_id>[0-9]*)$', group_views.posts, name='chat'),
     url(r'^timetables/(?P<group_id>[0-9]*)$', group_views.timetables, name='timetables'),
 	url(r'^create/group$', group_views.create_group, name='create_group'),
-    url(r'^create/child/(?P<group_id>[0-9]*)$', group_views.create_child, name='create_child'),
+    url(r'^create/child/(?P<group_id>[0-9]*)$', group_views.create_child, name='create child'),
     url(r'^create/event/(?P<group_id>[0-9]*)$', group_views.create_event, name='create_event'),
     url(r'^api/get_email_addresses/(?P<group_id>[0-9]*)$', group_views.get_email_addresses),
 ]

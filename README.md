@@ -12,8 +12,8 @@ virtualenv tmp/venv
 Turn the viritual enviorment on:
 source tmp/venv/bin/activate
 
-install django:
-pip install django
+install requirements:
+pip install -r requirements.txt
 
 start server with:
 bash dev_run.bash

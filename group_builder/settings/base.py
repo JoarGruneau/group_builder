@@ -26,7 +26,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = []
 
-
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 # Application definition
 
 PREREQ_APPS = [
@@ -41,8 +41,8 @@ PREREQ_APPS = [
 PROJECT_APPS = [
     'group_builder.apps.accounts',
     'group_builder.apps.groups',
-    #'group_builder.apps.sitetree',
-    'group_builder.apps.mptt',
+    'crispy_forms',
+    'mptt',
 ]
 
 INSTALLED_APPS = PREREQ_APPS + PROJECT_APPS

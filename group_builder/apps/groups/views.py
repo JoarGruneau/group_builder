@@ -44,51 +44,51 @@ def create_group(request):
 
 @login_required(login_url = "login/")
 def create_child(request, group_id):
-    parent, group_tree, rooms = lib_views.get_group_base_info(request.user, group_id)
+    group_info = lib_views.get_group_base_info(request.user, group_id)
+    member_types = lib_views.get_member_types(group_info['parent'])
     if(request.method == "POST"):
-        form = group_forms.CreateChildForm(request.POST)
+        form = group_forms.CreateChildForm(request.POST, member_types = member_types)
         if form.is_valid():
-            if(parent.has_permission(request.user, group_models.Permission.SUPER_USER)):
-                form.process(parent)
+            if(group_info['parent'].has_permission(request.user, group_models.Permission.SUPER_USER)):
+                form.process(group_info['parent'])
         return redirect('home')
     else:
-        form = group_forms.CreateChildForm()
-        return render(request,"create_group.html", {'nodes': group_tree, 'parent': group, 'rooms': rooms, 'form': form})
+        group_info['form'] = group_forms.CreateChildForm(member_types = member_types)
+        return render(request,"create_group.html", group_info)
 
 
 
 @login_required(login_url="login/")
 def group(request, group_id):
-    parent, group_tree, rooms = lib_views.get_group_base_info(request.user, group_id)
-    return render(request,"group_base.html", {'nodes': group_tree, 'parent': parent, 'rooms': rooms})
+    group_info = lib_views.get_group_base_info(request.user, group_id)
+    return render(request,"group_base.html", group_info)
 
 @login_required(login_url="login/")
 def members(request, group_id):
-    group, group_tree, rooms = lib_views.get_group_base_info(request.user, group_id)
-    members, invites = group.get_members()
-    return render(request,"members.html", {'nodes': group_tree, 'parent': group, 'rooms': rooms, 'members': members, 'invites': invites,})
+    group_info = lib_views.get_group_base_info(request.user, group_id)
+    members, invites = group_info['parent'].get_members()
+    group_info['members'] = members
+    group_info['invites'] = invites
+    return render(request,"members.html", group_info)
 
 @login_required(login_url="login/")
 def add_members(request, group_id):
-    group, group_tree, rooms = lib_views.get_group_base_info(request.user, group_id)
-
+    group_info = lib_views.get_group_base_info(request.user, group_id)
+    member_types = lib_views.get_member_types(group_info['parent'])
     if(request.method == "POST"):
-        email = request.POST.get("email", "")
-        group = group_models.Group.objects.get(id = group_id)
-        lib_views.handle_invite(request.user, group, email, group_models.Permission.SUPER_USER)
+        form = group_forms.InvitationForm(request.POST, member_types = member_types)
+        if form.is_valid():
+            form.process(request.user, group_info['parent'], )
         return redirect(reverse('members', args = [group_id]))
 
     else:
-        all_members = group_models.Group.objects.get(tree_id = group.tree_id, name ="all members")
-        member_types = list(all_members.get_descendants(include_self=False).values('name'))
-        print(member_types)
-        form = group_forms.InvitationForm(member_types = member_types)
-        return render(request,"add_members.html", {'nodes': group_tree, 'parent': group, 'rooms': rooms, 'form': form})
+        group_info['form'] = group_forms.InvitationForm(member_types = member_types)
+        return render(request,"add_members.html", group_info)
 
 
 @login_required(login_url="login/")
 def documents(request, group_id):
-    parent, group_tree, rooms = lib_views.get_group_base_info(request.user, group_id)
+    group_info = lib_views.get_group_base_info(request.user, group_id)
     if request.method == 'POST':
         form = group_forms.DocumentForm(request.POST, request.FILES)
         if form.is_valid():
@@ -98,15 +98,14 @@ def documents(request, group_id):
     else:
         form = group_forms.DocumentForm()
 
-    documents = parent.get_documents()
-    print(documents)
-    return render(request,"documents.html", {'parent': parent, 'nodes': group_tree, 'rooms': rooms, 'documents': documents, 'form': form})
+    group_info['documents'] = group_info['parent'].get_documents()
+    return render(request,"documents.html", group_info)
 
 @login_required(login_url = "login/")
 def timetables(request, group_id):
-    parent, group_tree, rooms = lib_views.get_group_base_info(request.user, group_id)
-    events = parent.get_events()
-    return render(request,"timetables.html", {'parent': parent, 'nodes': group_tree, 'rooms': rooms, 'events': events})
+    group_info = lib_views.get_group_base_info(request.user, group_id)
+    group_info['events'] = group_info['parent'].get_events()
+    return render(request,"timetables.html", group_info)
 
 @login_required(login_url="login/")
 def posts(request, group_id):
@@ -118,13 +117,13 @@ def posts(request, group_id):
             post.save()
             redirect(reverse('posts', args = [group_id]))
     else:
-        parent, group_tree = lib_views.get_group_base_info(request.user, group_id)
-        form = group_forms.PostForm()
-        return render(request,"conversations.html", {'parent': parent, 'nodes': group_tree, 'rooms': rooms, 'form': form})
+        group_info = lib_views.get_group_base_info(request.user, group_id)
+        group_info['form'] = group_forms.PostForm()
+        return render(request,"conversations.html", group_info)
 
 @login_required(login_url="login/")
 def create_event(request, group_id):
-    parent, group_tree = lib_views.get_tree_info(request.user, group_id)
+    group_info = lib_views.get_tree_info(request.user, group_id)
 
     if request.method == "POST":
         form = group_forms.EventForm(request.POST)
@@ -135,8 +134,8 @@ def create_event(request, group_id):
         return redirect(reverse('timetables', args = [group_id]))
 
     else:
-        form = group_forms.EventForm()
-        return render(request,"create_event.html", {'parent': parent, 'nodes': group_tree, 'form': form})
+        group_info['form'] = group_forms.EventForm()
+        return render(request,"create_event.html", group_info)
 
 import json
 @login_required(login_url="login/")
