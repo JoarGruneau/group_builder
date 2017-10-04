@@ -3,11 +3,8 @@
 {% block content %}
 {% load crispy_forms_tags %}
   <h2>Sign up</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <input class="btn btn-success btn-sm" type="submit" value="login" />
-  </form>
+
+  {% crispy form %}
 
   <script>
 {% if not user.is_authenticated %}

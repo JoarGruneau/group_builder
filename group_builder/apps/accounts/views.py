@@ -8,7 +8,7 @@ def register(request):
         form = accounts_forms.RegisterForm(request.POST)
         if(form.is_valid()):
             form.save()
-            username = form.cleaned_data.get('username')
+            username = form.cleaned_data.get('email')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username = username, password = raw_password)
             login(request, user)

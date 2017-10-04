@@ -14,7 +14,11 @@
     <p>Please login to see this page.</p>
     {% endif %}
 {% endif %}
-<header class = "header">
+
+                    {% load crispy_forms_tags %}
+
+                {% crispy form %}
+<!-- <header class = "header">
  <div class="container">
         <div class="row">
             <div class="col-md-4 col-md-offset-4">
@@ -23,6 +27,11 @@
                         <h3 class="panel-title">Please Sign In</h3>
                     </div>
                     <div class="panel-body">
+
+                    {% load crispy_forms_tags %}
+
+                {% crispy form %}
+
 <form method="post" action="">
 {% csrf_token %}
 <p class="bs-component">
@@ -47,7 +56,7 @@
 </div>
 </div>
 </div>
-</div>
+</div> - -->
 
 <script>
 {% if not user.is_authenticated %}
