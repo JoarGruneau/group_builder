@@ -1,21 +1,44 @@
 import group_builder.apps.groups.models as group_models
 
 from django import forms
-from functools import partial
-
-DateInput = partial(forms.DateInput, {'class': 'datepicker'})
-TimeInput  = partial(forms.TimeInput, {'class': 'timepicker'})
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit, Layout, Field, Div, ButtonHolder
+from crispy_forms.bootstrap import FormActions, InlineCheckboxes
 
 class EventForm(forms.ModelForm):
-
+    def __init__(self, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Div(
+                Div(Field('start_date', placeholder = 'Start date', css_class="datepicker", autocomplete="off"), css_class="col-sm-2"),
+                Div(Field('start_time', placeholder = 'Start time', css_class="timepicker", autocomplete="off"), css_class="col-sm-2"),
+                Div(Field('end_date', placeholder = 'End date', css_class="datepicker", autocomplete="off"), css_class="col-sm-2"),
+                Div(Field('end_time', placeholder = 'End time', css_class="timepicker", autocomplete="off"), css_class="col-sm-2"),
+                Div(FormActions(Submit('create event', 'Create event', css_class='btn btn-success')), css_class="col-md-2"),
+                css_class = 'row'),
+            )
+        self.helper.form_show_labels = False
     class Meta:
         model = group_models.Event
         exclude = ('group', )
-        widgets = {'start_date': DateInput() , 'start_time': TimeInput(), 'end_date': DateInput(), 'end_time': TimeInput()}
 
 class CreateGroupForm(forms.Form):
     group_rooms = forms.MultipleChoiceField(choices= group_models.Group_room.choices, widget=forms.CheckboxSelectMultiple())
     name = forms.CharField(label = "name", max_length = 100, required=True)
+
+    def __init__(self, *args, **kwargs):
+        super(CreateGroupForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Div(
+                Div(Field('name', placeholder = 'Group name', autocomplete="off"), css_class="col-sm-5"),
+                InlineCheckboxes('group_rooms'),
+                Div(FormActions(Submit('create group', 'Create group', css_class='btn btn-success')), css_class="col-md-2"),
+                css_class="container"
+                )
+            )
+        self.helper.form_show_labels = False
 
     def process(self, request_user):
         group = group_models.Group.objects.create(name = self.cleaned_data.get('name'), group_type=group_models.Group.DEFAULT)
@@ -27,12 +50,25 @@ class CreateGroupForm(forms.Form):
 
 
 class CreateChildForm(forms.Form):
+    name = forms.CharField(label = "name", max_length = 100, required=True)
+    group_rooms = forms.MultipleChoiceField(choices= group_models.Group_room.choices, widget=forms.CheckboxSelectMultiple(), required=False)
+
     def __init__(self, *args,**kwargs):
         member_choices = kwargs.pop('member_types')
         super(CreateChildForm, self).__init__(*args,**kwargs)
         self.fields['member_choice'] = forms.MultipleChoiceField(choices= member_choices, widget=forms.CheckboxSelectMultiple(), required=False)
-    name = forms.CharField(label = "name", max_length = 100, required=True)
-    group_rooms = forms.MultipleChoiceField(choices= group_models.Group_room.choices, widget=forms.CheckboxSelectMultiple(), required=False)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Div(
+                Div(Field('name', placeholder = 'Group name', autocomplete="off"), css_class="col-sm-5"),
+                InlineCheckboxes('group_rooms'),
+                InlineCheckboxes('member_choice'),
+                Div(FormActions(Submit('create child', 'Create child', css_class='btn btn-success')), css_class="col-md-2"),
+                css_class="container"
+                )
+            )
+        self.helper.form_show_labels = False
 
     def process(self, parent):
         is_member_group = group_models.Group.objects.filter(

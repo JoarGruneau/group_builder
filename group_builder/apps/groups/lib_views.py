@@ -47,8 +47,6 @@ def get_member_types(group):
 
 def get_members_email(request_user, group_id):
     group = get_group(request_user, group_id)
-    all_members = get_member_group(request_user, group)
-    print("k")
     K = group_models.Permission.objects.filter(group__tree_id = all_members.tree_id).values('user__email')
     print(K)
     # group_models.Permission.objects.filter(group = all_members, group__lft__gte = all_members.lft, group__rght__lte = all_members.rght).values('user__email')

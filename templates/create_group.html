@@ -2,9 +2,12 @@
 
 {% block page %}
   <h2>Create a new group</h2>
-  <form method="post" actiion = >
+      {% load crispy_forms_tags %}
+    {% crispy form %}
+<!--   <form method="post" actiion = >
+
     {% csrf_token %}
     {{ form.as_p }}
     <input class="btn btn-success btn-sm" type="submit" value="create group" />
-  </form>
+  </form> -->
 {% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block navbar %}
+    {% crispy login_form %}
+{% endblock %}
+
+{% block content %}
+    {% crispy register_form %}
+{% endblock %}

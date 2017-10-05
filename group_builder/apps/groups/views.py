@@ -123,17 +123,18 @@ def posts(request, group_id):
 
 @login_required(login_url="login/")
 def create_event(request, group_id):
-    group_info = lib_views.get_tree_info(request.user, group_id)
+    group_info = lib_views.get_group_base_info(request.user, group_id)
 
     if request.method == "POST":
         form = group_forms.EventForm(request.POST)
         if form.is_valid():
             event = form.save(commit=False)
-            event.group = parent
+            event.group = group_info['parent']
             event.save()
         return redirect(reverse('timetables', args = [group_id]))
 
     else:
+        print(group_info)
         group_info['form'] = group_forms.EventForm()
         return render(request,"create_event.html", group_info)
 

@@ -4,6 +4,7 @@
 
 {% load mptt_tags %}
   <nav class="navbar navbar-default">
+    
     <ul class="nav navbar-nav">
     {% for room in rooms %}
       <li><a href="{% url room.get_room_display group_id=parent.id%}">{{room.get_room_display}}</a></li>
